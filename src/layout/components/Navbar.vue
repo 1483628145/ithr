@@ -71,7 +71,7 @@ export default {
   },
   data() {
     return {
-      centerDialogVisible: true,
+      centerDialogVisible: false,
       updateUserForm: {
         oldPassword: '',
         newPassword: '',

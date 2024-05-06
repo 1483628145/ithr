@@ -19,6 +19,12 @@ const mutations = {
   // 保存用户信息
   setUserInfo(state, userInfo) {
     state.userInfo = userInfo
+  },
+  // 删除token
+  delToken(state) {
+    removeToken()
+    state.token = null
+    state.userInfo = null
   }
 }
 
@@ -30,8 +36,8 @@ const actions = {
     context.commit('setToken', token)
   },
   // 退出登录
-  logout() {
-    removeToken()
+  logout(context) {
+    context.commit('delToken')
   },
   // 获取用户信息
   async getUserInfo(context) {

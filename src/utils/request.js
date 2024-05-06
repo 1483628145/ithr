@@ -1,9 +1,9 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import { Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+import router from '@/router'
 
-// create an axios instance
+// 创建axios实例
 const service = axios.create({
   baseURL: '/api', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
@@ -27,15 +27,26 @@ service.interceptors.request.use(
 )
 
 // 响应拦截器
-service.interceptors.response.use((response) => {
+service.interceptors.response.use(async(response) => {
   const { data, message, success } = response.data // 默认json格式
+  // 成功
   if (success) {
     return data
   } else {
     Message({ type: 'error', message })
     return Promise.reject(new Error(message))
   }
-}, async(error) => {
+},
+// 失败
+async(error) => {
+  // token失效的情况
+  if (error.response.status === 401) {
+    Message({ type: 'error', message: 'Token超时' })
+    // 删除本地token
+    await store.dispatch('user/logout')
+    router.push('/login')
+    return Promise.reject(error)
+  }
   // error.message
   Message({ type: 'error', message: error.message })
   return Promise.reject(error)

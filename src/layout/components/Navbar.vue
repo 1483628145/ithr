@@ -20,7 +20,36 @@
               Home
             </el-dropdown-item>
           </router-link>
+          <el-dropdown-item divided @click.native="showUpdateDialog">
+            <span style="display:block;">修改密码</span>
+          </el-dropdown-item>
+          <!-- 修改密码dialog -->
+          <el-dialog
+            title="修改密码"
+            :visible.sync="centerDialogVisible"
+            width="30%"
+            center
+            append-to-body
+          >
+            <!-- 修改密码表格 -->
+            <el-form :ref="updateRef" label-width="120px" :model="updateUserForm">
+              <el-form-item label="旧密码" prop="oldPassword">
+                <el-input v-model="updateUserForm.oldPassword" show-password size="small" />
+              </el-form-item>
+              <el-form-item label="新密码" prop="newPassword">
+                <el-input v-model="updateUserForm.newPassword" show-password size="small" />
+              </el-form-item>
+              <el-form-item label="重复密码" prop="conPassword">
+                <el-input v-model="updateUserForm.conPassword" show-password size="small" />
+              </el-form-item>
+              <el-form-item>
+                <el-button size="mini" type="primary" @click="confirmUpdatePassword">确认</el-button>
+                <el-button size="mini" @click="cancelUpdatePassword">取消</el-button>
+              </el-form-item>
+            </el-form>
 
+          </el-dialog>
+          <!-- 退出登录 -->
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">退出登录</span>
           </el-dropdown-item>
@@ -40,6 +69,16 @@ export default {
     Breadcrumb,
     Hamburger
   },
+  data() {
+    return {
+      centerDialogVisible: true,
+      updateUserForm: {
+        oldPassword: '',
+        newPassword: '',
+        conPassword: ''
+      }
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
@@ -54,6 +93,22 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    // 打开修改密码对话框
+    showUpdateDialog() {
+      this.centerDialogVisible = false
+    },
+    // 确认修改用户密码
+    confirmUpdatePassword() {
+      // 确定通过表单验证
+      // 调接口修改密码
+      // 清除表格数据
+      // 关闭dialog
+    },
+    // 取消修改密码
+    cancelUpdatePassword() {
+      // 清除表格数据
+      // 关闭dialog
     }
   }
 }

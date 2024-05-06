@@ -61,18 +61,18 @@ export const constantRoutes = [
     children: [
       {
         path: 'dashboard',
-        name: 'Dashboard',
+        name: '首页',
         component: () => import('@/views/dashboard/index'),
-        meta: { title: 'Dashboard', icon: 'dashboard' }
+        meta: { title: '首页', icon: 'dashboard' }
       }
     ]
   },
-  approval,
-  attendance,
   department,
+  role,
   employee,
   permission,
-  role,
+  attendance,
+  approval,
   salary,
   social,
   // 404 page must be placed at the end !!!

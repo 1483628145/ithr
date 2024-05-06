@@ -4,7 +4,7 @@ import nprogress from 'nprogress'
 import store from './store'
 
 // 路由前置守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   nprogress.start()
   const whiteList = ['/login', '/404']
   const token = store.getters.token
@@ -17,6 +17,9 @@ router.beforeEach((to, from, next) => {
       nprogress.done()
     } else {
       // 有token 跳转到其他页面 放行
+      if (!store.getters.userId) {
+        await store.dispatch('user/getUserInfo')
+      }
       next()
     }
   } else {

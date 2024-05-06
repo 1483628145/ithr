@@ -30,6 +30,17 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
+// 路由表
+// 引入路由模块
+import approval from '@/router/modules/approval'
+import attendance from '@/router/modules/attendance'
+import department from '@/router/modules/department'
+import employee from '@/router/modules/employee'
+import permission from '@/router/modules/permission'
+import role from '@/router/modules/role'
+import salary from '@/router/modules/salary'
+import social from '@/router/modules/social'
+
 export const constantRoutes = [
   {
     path: '/login',
@@ -47,14 +58,23 @@ export const constantRoutes = [
     path: '/',
     component: Layout,
     redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
-    }]
+    children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard/index'),
+        meta: { title: 'Dashboard', icon: 'dashboard' }
+      }
+    ]
   },
-
+  approval,
+  attendance,
+  department,
+  employee,
+  permission,
+  role,
+  salary,
+  social,
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

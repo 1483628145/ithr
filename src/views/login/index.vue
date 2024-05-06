@@ -6,15 +6,15 @@
       <el-card shadow="never" class="login-card">
         <!--登录表单-->
         <!-- el-form > el-form-item > el-input -->
-        <el-form>
-          <el-form-item>
-            <el-input placeholder="请输入手机号" />
+        <el-form ref="ref" :model="loginForm" :rules="loginRules">
+          <el-form-item prop="mobile">
+            <el-input v-model="loginForm.mobile" placeholder="请输入手机号" />
           </el-form-item>
-          <el-form-item>
-            <el-input placeholder="请输入密码" />
+          <el-form-item prop="password">
+            <el-input v-model="loginForm.password" show-password placeholder="请输入密码" />
           </el-form-item>
-          <el-form-item>
-            <el-checkbox>
+          <el-form-item prop="isAgree">
+            <el-checkbox v-model="loginForm.isAgree">
               用户平台使用协议
             </el-checkbox>
           </el-form-item>
@@ -25,20 +25,50 @@
       </el-card></div>
   </div></template>
 <script>
+
 export default {
   name: 'Login',
   data() {
     return {
+      // 登录表单
       loginForm: {
         mobile: '13800000002',
-        password: 'hm#qd@23!'
+        password: 'hm#qd@23!',
+        isAgree: true
+      },
+      // 校验规则
+      loginRules: {
+        mobile: [
+          { required: true, message: '请输入手机号码', trigger: 'blur' },
+          { pattern: /^1[3-9]\d{9}$/, message: '手机号码格式不正确！', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ],
+        // 自定义校验
+        isAgree: [{
+          validator: (rule, value, callback) => {
+            if (value) {
+              callback()
+            } else {
+              callback(new Error('请勾选用户使用协议'))
+            }
+          }
+        }
+        ]
       }
     }
   },
   methods: {
-    async LoginBut() {
-      await this.$store.dispatch('user/login', this.loginForm)
-      this.$router.push('/')
+
+    LoginBut() {
+      // 发请求前先做校验
+      this.$refs.ref.validate(async(isok) => {
+        if (isok) {
+          await this.$store.dispatch('user/login', this.loginForm)
+          this.$router.push('/')
+        }
+      })
     }
   }
 }

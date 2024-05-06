@@ -1,64 +1,39 @@
+// 路由守卫
 import router from './router'
+import nprogress from 'nprogress'
 import store from './store'
-import { Message } from 'element-ui'
-import NProgress from 'nprogress' // progress bar
-import 'nprogress/nprogress.css' // progress bar style
-import { getToken } from '@/utils/auth' // get token from cookie
-import getPageTitle from '@/utils/get-page-title'
 
-NProgress.configure({ showSpinner: false }) // NProgress Configuration
-
-const whiteList = ['/login'] // no redirect whitelist
-
-router.beforeEach(async(to, from, next) => {
-  // start progress bar
-  NProgress.start()
-
-  // set page title
-  document.title = getPageTitle(to.meta.title)
-
-  // determine whether the user has logged in
-  const hasToken = getToken()
-
-  if (hasToken) {
+// 路由前置守卫
+router.beforeEach((to, from, next) => {
+  nprogress.start()
+  const whiteList = ['/login', '/404']
+  const token = store.getters.token
+  // 判断token
+  if (token) {
+    // 有token
     if (to.path === '/login') {
-      // if is logged in, redirect to the home page
-      next({ path: '/' })
-      NProgress.done()
+      // 有token 跳转到登录页面 强制跳转到主页
+      next('/')
+      nprogress.done()
     } else {
-      const hasGetUserInfo = store.getters.name
-      if (hasGetUserInfo) {
-        next()
-      } else {
-        try {
-          // get user info
-          await store.dispatch('user/getInfo')
-
-          next()
-        } catch (error) {
-          // remove token and go to login page to re-login
-          await store.dispatch('user/resetToken')
-          Message.error(error || 'Has Error')
-          next(`/login?redirect=${to.path}`)
-          NProgress.done()
-        }
-      }
+      // 有token 跳转到其他页面 放行
+      next()
     }
   } else {
-    /* has no token*/
-
-    if (whiteList.indexOf(to.path) !== -1) {
-      // in the free login whitelist, go directly
+    // 没有token
+    if (whiteList.includes(to.path)) {
+      // 没有token且跳转到白名单 放行
       next()
     } else {
-      // other pages that do not have permission to access are redirected to the login page.
-      next(`/login?redirect=${to.path}`)
-      NProgress.done()
+      // 没有token且跳转到其他页面 强制跳转到登录页面
+      next('/login')
+      nprogress.done()
     }
   }
 })
 
+// 路由后置守卫
 router.afterEach(() => {
-  // finish progress bar
-  NProgress.done()
+  nprogress.done()
 })
+

@@ -9,7 +9,7 @@
           <el-col :span="4">
             <span class="tree-manager">{{ data.managerName }}</span>
             <!-- $event 实参 表示类型 -->
-            <el-dropdown>
+            <el-dropdown @command="handleCommand($event,data.id)">
               <!-- 显示区域内容 -->
               <span class="el-dropdown-link">
                 操作<i class="el-icon-arrow-down el-icon--right" />
@@ -27,26 +27,44 @@
     </el-tree>
 
     <!-- 添加子部门 -->
+    <AddDept :show-dialog="showDialog" @changeDialog="changeDialog" />
   </div>
 </template>
 
 <script>
 import { transListToTreeData } from '@/utils/index'
 import { getDepartList } from '@/api/department'
+import AddDept from '@/components/Department/AddDept.vue'
 export default {
+  components: {
+    AddDept
+  },
   data() {
     return {
       list: [],
-      defaultProps: []
+      defaultProps: [],
+      showDialog: false // 弹窗
     }
   },
   created() {
     this.getDepartList()
   },
   methods: {
+    // 获取组织列表
     async getDepartList() {
       const res = await getDepartList()
       this.list = transListToTreeData(res, 0)
+    },
+    // 添加子部门
+    handleCommand(command, id) {
+      if (command === 'add') {
+        // 点击添加子部门触发
+        this.showDialog = true
+      }
+    },
+    // 关闭弹窗
+    changeDialog(data) {
+      this.showDialog = data
     }
   }
 }

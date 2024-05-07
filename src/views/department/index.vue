@@ -27,7 +27,7 @@
     </el-tree>
 
     <!-- 添加子部门 -->
-    <AddDept :show-dialog="showDialog" @changeDialog="changeDialog" />
+    <AddDept :id="id" :show-dialog="showDialog" @changeDialog="changeDialog" />
   </div>
 </template>
 
@@ -43,7 +43,8 @@ export default {
     return {
       list: [],
       defaultProps: [],
-      showDialog: false // 弹窗
+      showDialog: false, // 弹窗
+      id: ''
     }
   },
   created() {
@@ -57,9 +58,10 @@ export default {
     },
     // 添加子部门
     handleCommand(command, id) {
-      if (command === 'add') {
+      if (command === 'add' || command === 'edit') {
         // 点击添加子部门触发
         this.showDialog = true
+        this.id = id
       }
     },
     // 关闭弹窗

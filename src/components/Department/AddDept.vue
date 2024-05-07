@@ -9,7 +9,7 @@
       @close="closeDialog"
     >
       <!-- 修改密码表格 -->
-      <el-form :ref="updateRef" label-width="120px" :model="updateUserForm" :rules="rules">
+      <el-form ref="updateRef" label-width="120px" :model="updateUserForm" :rules="rules">
         <el-form-item label="部门名称" prop="name">
           <el-input v-model="addForm.name" size="small" />
         </el-form-item>
@@ -34,13 +34,17 @@
 </template>
 
 <script>
-import { addDepart, getManagerList, getDepartList } from '@/api/department'
+import { addDepart, getManagerList, getDepartList, getDepartDetail } from '@/api/department'
 export default {
   name: 'AddDept',
   props: {
     showDialog: {
       type: Boolean,
       default: false
+    },
+    id: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -108,6 +112,7 @@ export default {
   },
   created() {
     this.getManagerList()
+    this.getDepartDetail()
   },
   methods: {
     // 关闭弹层
@@ -121,8 +126,9 @@ export default {
       this.managerList = await getManagerList()
     },
 
-    // 添加部门
+    // 确认添加部门
     confirmUpdatePassword() {
+      console.log(this.$refs)
       // 判断是否通过校验
       this.$refs.updateRef.validate(async(isOK) => {
         // 通过校验
@@ -132,12 +138,18 @@ export default {
       })
       // 关闭弹层
       this.closeDialog()
+      // 重置表单
+      this.$refs.updateRef.resetField()
     },
     // 取消新增部门
     cancelUpdatePassword() {
       // this.$refs.updateRef.resetFields()
       // 关闭弹层
       this.closeDialog()
+    },
+    // 获取部门详情
+    async getDepartDetail() {
+      await getDepartDetail(this.id)
     }
 
   }

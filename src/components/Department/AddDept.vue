@@ -24,8 +24,8 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button size="mini" type="primary" @click="confirmUpdatePassword">确认</el-button>
-          <el-button size="mini" @click="cancelUpdatePassword">取消</el-button>
+          <el-button size="mini" type="primary" @click="confirmUpdate">确认</el-button>
+          <el-button size="mini" @click="cancelUpdate">取消</el-button>
         </el-form-item>
       </el-form>
 
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { addDepart, getManagerList, getDepartList, getDepartDetail } from '@/api/department'
+import { addDepart, getManagerList, getDepartList, getDepartDetail, updateDeptDetail } from '@/api/department'
 export default {
   name: 'AddDept',
   props: {
@@ -127,7 +127,7 @@ export default {
     },
 
     // 确认添加部门
-    confirmUpdatePassword() {
+    confirmUpdate() {
       console.log(this.$refs)
       // 判断是否通过校验
       this.$refs.updateRef.validate(async(isOK) => {
@@ -142,7 +142,7 @@ export default {
       this.$refs.updateRef.resetField()
     },
     // 取消新增部门
-    cancelUpdatePassword() {
+    cancelUpdate() {
       // this.$refs.updateRef.resetFields()
       // 关闭弹层
       this.closeDialog()
@@ -150,6 +150,10 @@ export default {
     // 获取部门详情
     async getDepartDetail() {
       await getDepartDetail(this.id)
+    },
+    // 修改部门详情
+    async updateDeptDetail() {
+      await updateDeptDetail()
     }
 
   }

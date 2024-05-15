@@ -44,3 +44,27 @@ export function getDepartDetail(id) {
     method: 'GET'
   })
 }
+
+/**
+ * 修改部门详情
+ * **/
+
+export function updateDeptDetail(data) {
+  return request({
+    url: `/company/department/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}
+
+/**
+ * 删除部门
+ * **/
+
+export function deleteDept(data) {
+  return request({
+    url: `/company/department/${data.id}`,
+    method: 'DELETE',
+    data
+  })
+}

@@ -20,31 +20,58 @@
             <div class="todo-item">
               <span>组织总人数</span>
               <!-- 起始值 终点值  滚动时间 -->
-              <span>228</span>
+              <count-to
+                :start-val="0"
+                :end-val="homeData.employeeTotal"
+                :duration="1000"
+              />
             </div>
             <div class="todo-item">
               <span>正式员工</span>
-              <span>334</span>
+              <count-to
+                :start-val="0"
+                :end-val="homeData.regularEmployeeTotal"
+                :duration="1000"
+              />
             </div>
             <div class="todo-item">
               <span>合同待签署</span>
-              <span>345</span>
+              <count-to
+                :start-val="0"
+                :end-val="homeData.contractSignTotal"
+                :duration="1000"
+              />
             </div>
             <div class="todo-item">
               <span>待入职</span>
-              <span>890</span>
-            </div>
+              <count-to
+                :start-val="0"
+                :end-val="homeData.toBeEmployed"
+                :duration="1000"
+              />            </div>
             <div class="todo-item">
               <span>本月待转正</span>
-              <span>117</span>
+              <count-to
+                :start-val="0"
+                :end-val="homeData.toBeConfirmed"
+                :duration="1000"
+              />
             </div>
             <div class="todo-item">
               <span>本月待离职</span>
-              <span>234</span>
+              <count-to
+                :start-val="0"
+                :end-val="homeData.toBeDismissed"
+                :duration="1000"
+              />
             </div>
             <div class="todo-item">
               <span>接口总访问</span>
-              <span>789</span>
+              <count-to
+                :start-val="0"
+                :end-val="homeData.interfaceAccessTotal"
+                :duration="1000"
+              />
             </div>
           </div>
         </div>
@@ -74,61 +101,96 @@
             </div>
           </div>
         </div>
-        <!-- 图表数据 -->
+        <!-- 社保-图表数据 -->
         <div class="panel">
           <div class="panel-title">社保申报数据</div>
           <div class="chart-container">
             <div class="chart-info">
               <div class="info-main">
                 <span>申报人数</span>
-                <span>223</span>
+                <count-to
+                  :start-val="0"
+                  :end-val="223"
+                  :duration="1000"
+                />
+
               </div>
               <div class="info-list">
                 <div class="info-list-item">
                   <span>待申报(人)</span>
-                  <span>117</span>
+                  <count-to
+                    :start-val="0"
+                    :end-val="117"
+                    :duration="1000"
+                  />
                 </div>
                 <div class="info-list-item">
                   <span>申报中(人)</span>
-                  <span>167</span>
+                  <count-to
+                    :start-val="0"
+                    :end-val="167"
+                    :duration="1000"
+                  />
                 </div>
                 <div class="info-list-item">
                   <span>已申报(人)</span>
-                  <span>24</span>
+                  <count-to
+                    :start-val="0"
+                    :end-val="24"
+                    :duration="1000"
+                  />
                 </div>
               </div>
             </div>
             <div class="chart">
               <!-- 图表 -->
+              <div ref="social" style="width: 100%; height: 100%; " />
             </div>
           </div>
         </div>
-        <!-- 图表数据 -->
+        <!-- 公积金-图表数据 -->
         <div class="panel">
           <div class="panel-title">公积金申报数据</div>
           <div class="chart-container">
             <div class="chart-info">
               <div class="info-main">
                 <span>申报人数</span>
-                <span>335</span>
+                <count-to
+                  :start-val="0"
+                  :end-val="335"
+                  :duration="1000"
+                />
               </div>
               <div class="info-list">
                 <div class="info-list-item">
                   <span>待申报(人)</span>
-                  <span>345</span>
+                  <count-to
+                    :start-val="0"
+                    :end-val="345"
+                    :duration="1000"
+                  />
                 </div>
                 <div class="info-list-item">
                   <span>申报中(人)</span>
-                  <span>109</span>
+                  <count-to
+                    :start-val="0"
+                    :end-val="109"
+                    :duration="1000"
+                  />
                 </div>
                 <div class="info-list-item">
                   <span>已申报(人)</span>
-                  <span>77</span>
+                  <count-to
+                    :start-val="0"
+                    :end-val="77"
+                    :duration="1000"
+                  />
                 </div>
               </div>
             </div>
             <div class="chart">
-              <!-- 图表 -->
+              <!-- 公积金-图表 -->
+              <div ref="provident" style="width: 100%; height: 100%; " />
             </div>
           </div>
         </div>
@@ -209,10 +271,86 @@
 </template>
 
 <script>
+// 引入Echars
+import * as echarts from 'echarts' // 引入所有的echarts
+import { getHomeData } from '@/api/home'
 import CountTo from 'vue-count-to'
 export default {
   components: {
     CountTo
+  },
+  data() {
+    return {
+      homeData: {}
+    }
+  },
+  watch: {
+    // 当homeData变化 设置图表参数
+    homeData() {
+      // 设置社保初始参数
+      this.social.setOption({
+        xAxis: {
+          type: 'category',
+          // X轴数据
+          data: this.homeData.socialInsurance?.xAxis
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            // Y轴数据
+            data: this.homeData.socialInsurance?.yAxis,
+            type: 'line',
+            areaStyle: {
+              color: '#04c9be' // 填充颜色
+            },
+            lineStyle: {
+              color: '#04c9be' // 线的颜色
+            }
+          }
+        ]
+      })
+      // 设置公积金初始参数
+      this.provident.setOption({
+        xAxis: {
+          type: 'category',
+          // X轴数据
+          data: this.homeData.providentFund?.xAxis
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            // Y轴数据
+            data: this.homeData.providentFund?.yAxis,
+            type: 'line',
+            areaStyle: {
+              color: '#04c9be' // 填充颜色
+            },
+            lineStyle: {
+              color: '#04c9be' // 线的颜色
+            }
+          }
+        ]
+      })
+    }
+
+  },
+  mounted() {
+    // 初始化echarts拿到实例 注意在mounted才能拿到DOM元素
+    this.social = echarts.init(this.$refs.social)
+    this.provident = echarts.init(this.$refs.provident)
+  },
+  created() {
+    this.getHomeData()
+  },
+  methods: {
+    // 获取首页数据
+    async getHomeData() {
+      this.homeData = await getHomeData()
+    }
   }
 }
 </script>
